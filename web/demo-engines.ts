@@ -183,6 +183,110 @@ function musicWav() {
 }
 
 // ---------------------------------------------------------------------
+// real footage: the Station's own frames, packed by `npm run build:web`
+// into demo-media/. Every render prompt carries the comic's look, so each
+// comic gets their own face back; the procedural stage is the fallback.
+// ---------------------------------------------------------------------
+
+export interface MediaComic { name: string; tagline: string; look: string; headshot: string; stills: string[]; clips: string[] }
+let media: MediaComic[] = [];
+export const demoMedia = () => media;
+
+export async function loadDemoMedia(): Promise<void> {
+  try {
+    const r = await fetch('./demo-media/manifest.json', { cache: 'no-cache' });
+    if (r.ok) media = ((await r.json())?.comics || []).filter((c: MediaComic) => c.headshot && c.look);
+  } catch { /* procedural frames */ }
+}
+
+const norm = (s: string) => s.toLowerCase().replace(/\s+/g, ' ');
+
+/** Whose frames a prompt asks for: by look, else by name, else (unless strict) a stable pick. */
+function comicFor(prompt: string, strict = false): MediaComic | null {
+  if (!media.length) return null;
+  const p = norm(prompt);
+  return media.find(c => p.includes(norm(c.look).slice(0, 48)))
+    || media.find(c => p.includes(c.name.toLowerCase()))
+    || (strict ? null : media[hashStr(p.slice(0, 160)) % media.length]);
+}
+
+const blobs = new Map<string, Promise<Blob>>();
+function load(url: string): Promise<Blob> {
+  if (!blobs.has(url)) blobs.set(url, fetch(url).then(r => { if (!r.ok) throw new Error(url); return r.blob(); }));
+  return blobs.get(url)!;
+}
+
+async function realStill(prompt: string, portrait = false): Promise<Blob | null> {
+  const c = comicFor(prompt);
+  if (!c) return null;
+  const pool = portrait || /portrait headshot/i.test(prompt) || !c.stills.length ? [c.headshot] : c.stills;
+  return load(pool[hashStr(prompt) % pool.length]).catch(() => null);
+}
+
+async function realClip(prompt: string): Promise<{ data: Blob; ext: string } | null> {
+  const c = comicFor(prompt);
+  if (!c) return null;
+  if (c.clips.length) {
+    const data = await load(c.clips[hashStr(prompt) % c.clips.length]).catch(() => null);
+    return data ? { data, ext: 'mp4' } : null;
+  }
+  // No footage of this comic yet: a slow push-in on one of their stills.
+  const still = await realStill(prompt);
+  return still ? pushIn(still, hashStr(prompt)).catch(() => null) : null;
+}
+
+function canvas(w: number, h: number) {
+  const cv = document.createElement('canvas');
+  cv.width = w; cv.height = h;
+  return { cv, ctx: cv.getContext('2d')! };
+}
+
+/** A few seconds of camera push recorded from a canvas (WebM, or MP4 on Safari). */
+async function pushIn(still: Blob, seed: number, seconds = 3): Promise<{ data: Blob; ext: string } | null> {
+  if (typeof MediaRecorder === 'undefined') return null;
+  const type = ['video/webm;codecs=vp9', 'video/webm', 'video/mp4'].find(t => MediaRecorder.isTypeSupported(t));
+  if (!type) return null;
+  const img = await createImageBitmap(still);
+  const { cv, ctx } = canvas(768, 512);
+  const rec = new MediaRecorder(cv.captureStream(30), { mimeType: type, videoBitsPerSecond: 3_000_000 });
+  const chunks: Blob[] = [];
+  rec.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+  const stopped = new Promise(r => { rec.onstop = r; });
+  const fx = 0.35 + (seed % 30) / 100;   // where the push lands
+  const draw = (t: number) => {
+    const s = Math.max(cv.width / img.width, cv.height / img.height) * (1.04 + 0.14 * t);
+    const w = img.width * s, h = img.height * s;
+    ctx.drawImage(img, (cv.width - w) * fx, (cv.height - h) * 0.4, w, h);
+  };
+  draw(0);
+  rec.start();
+  const t0 = performance.now();
+  await new Promise<void>(done => {
+    const tick = () => { const t = Math.min(1, (performance.now() - t0) / (seconds * 1000)); draw(t); if (t < 1) setTimeout(tick, 33); else done(); };
+    tick();
+  });
+  rec.stop();
+  await stopped;
+  img.close();
+  return { data: new Blob(chunks, { type: type.split(';')[0] }), ext: type.includes('mp4') ? 'mp4' : 'webm' };
+}
+
+/** A sampler preview: the real frame under noise that clears as the steps run. */
+async function noisyPreview(still: Blob, noise: number): Promise<Uint8Array> {
+  const img = await createImageBitmap(still);
+  const { cv, ctx } = canvas(192, 128);
+  ctx.drawImage(img, 0, 0, 192, 128);
+  img.close();
+  const px = ctx.getImageData(0, 0, 192, 128);
+  for (let i = 0; i < px.data.length; i += 4) for (let k = 0; k < 3; k++) px.data[i + k] = px.data[i + k] * (1 - noise) + Math.random() * 255 * noise;
+  ctx.putImageData(px, 0, 0);
+  const blob = await new Promise<Blob>((res, rej) => cv.toBlob(b => (b ? res(b) : rej(new Error('canvas'))), 'image/png'));
+  return new Uint8Array(await blob.arrayBuffer());
+}
+
+const extOf = (b: Blob) => (b.type === 'image/jpeg' ? 'jpg' : b.type === 'image/webp' ? 'webp' : 'png');
+
+// ---------------------------------------------------------------------
 // writing: canned but genuinely written comedians (kept in step with
 // scripts/mock-engines.mjs)
 // ---------------------------------------------------------------------
@@ -301,11 +405,13 @@ function comicJson(text: string) {
   const first = ['Ari', 'Bo', 'Cass', 'Dante', 'Esme', 'Finn', 'Gigi', 'Imani', 'Kit', 'Nell'], last = ['Abara', 'Cho', 'Fairley', 'Moreau', 'Nwosu', 'Sato', 'Quintero', 'Lindqvist'];
   const h = hashStr(text + Date.now());
   const apprentice = /APPRENTICE/.test(text);
+  // In the web demo a newcomer wears a Station comic's look, so their renders come back as real footage.
+  const borrowed = media.length ? media[(h >>> 8) % media.length].look : null;
   return JSON.stringify({
     name: `${first[h % first.length]} ${last[(h >>> 4) % last.length]}`,
     tagline: apprentice ? 'Learned from the best. Plans to beat them.' : 'First open mic tonight. No notes. Big dreams.',
     voice: 'quick, wry, a little too honest', style: ['observational', 'absurdist', 'dark', 'storytelling'][h % 4], audience: 'night owls and underdogs',
-    look: 'a young comedian in a thrifted corduroy jacket, round glasses, notebook in the back pocket',
+    look: borrowed || 'a young comedian in a thrifted corduroy jacket, round glasses, notebook in the back pocket',
     doctrine: apprentice ? 'The old school, sped up: every setup is also a punchline.' : 'Tell the truth, then make it weirder.',
     material: [{ name: 'Day job', type: 'THEME', description: 'Temping at a call center for a company that sells call centers' }, { name: 'Roommate Dev', type: 'PERSONA', description: 'Has a podcast. Has never had a listener.' }]
   });
@@ -530,7 +636,10 @@ export async function nightshift(req: DemoRequest): Promise<Response> {
   if (af) {
     const e = (job.artifacts.get(Number(af[1])) || []).find((x: any) => x.name === decodeURIComponent(af[2]));
     if (!e) return json(404, { error: { message: 'not found' } });
-    if (e._transform === 'attempt.image.still') return bytes(await stillPng(e._text, 512, 384), e.mime);
+    if (e._transform === 'attempt.image.still') {
+      const real = await realStill(e._text);
+      return real ? bytes(real, real.type || e.mime) : bytes(await stillPng(e._text, 512, 384), e.mime);
+    }
     if (e._transform === 'attempt.music.score') return bytes(musicWav(), e.mime);
     if (e._transform === 'attempt.voice.narrate') return bytes(speechWav(e._text), e.mime);
     return bytes(enc.encode('{}'), e.mime);
@@ -610,9 +719,13 @@ async function runQueue() {
     queue.forEach((_, i) => tell(clientId, { type: 'status', data: { status: { exec_info: { queue_remaining: queue.length - i } } } }));
     tell(clientId, { type: 'execution_start', data: { prompt_id: id } });
     const nodes = Object.keys(graph);
-    const text = Object.values<any>(graph).filter(n => n.class_type === 'CLIPTextEncode').map(n => n.inputs.text)[0] || 'stage';
+    const texts: string[] = Object.values<any>(graph).filter(n => n.class_type === 'CLIPTextEncode').map(n => String(n.inputs.text || ''));
+    const text = texts.find(t => comicFor(t, true)) || texts.find(Boolean) || 'stage';
     const video = Object.values<any>(graph).some(n => /Video|WEBP/.test(n.class_type));
     const sampler = nodes.find(k => /KSampler$|SamplerCustomAdvanced/.test(graph[k].class_type));
+    const latent = Object.values<any>(graph).find(n => /EmptySD3LatentImage|EmptyLatentImage/.test(n.class_type));
+    const portrait = !!latent && latent.inputs.height > latent.inputs.width;
+    const real = await realStill(text, portrait).catch(() => null);
     for (const k of nodes) {
       tell(clientId, { type: 'executing', data: { node: k, prompt_id: id } });
       if (k === sampler) {
@@ -621,7 +734,7 @@ async function runQueue() {
           await sleep(video ? 260 : 170);
           tell(clientId, { type: 'progress', data: { value: s, max: steps, prompt_id: id, node: k } });
           if (s % 2 === 0 && sockets.has(clientId)) {
-            const png = new Uint8Array(await (await stillPng(String(text), 192, 144, 1 - s / steps)).arrayBuffer());
+            const png = real ? await noisyPreview(real, 1 - s / steps) : new Uint8Array(await (await stillPng(String(text), 192, 144, 1 - s / steps)).arrayBuffer());
             const frame = new Uint8Array(8 + png.length);
             new DataView(frame.buffer).setUint32(0, 1); new DataView(frame.buffer).setUint32(4, 2);
             frame.set(png, 8);
@@ -630,10 +743,12 @@ async function runQueue() {
         }
       } else await sleep(40);
     }
-    const name = `standupify_${id.slice(0, 8)}.${video ? 'gif' : 'png'}`;
-    const latent = Object.values<any>(graph).find(n => /EmptySD3LatentImage|EmptyLatentImage/.test(n.class_type));
     const w = latent ? Math.min(1024, latent.inputs.width) / 2 : 512, h = latent ? Math.min(1024, latent.inputs.height) / 2 : 384;
-    files.set(name, video ? { mime: 'image/gif', data: zoomGif(String(text)) } : { mime: 'image/png', data: await stillPng(String(text), Math.round(w), Math.round(h)) });
+    const clip = video ? await realClip(text) : null;
+    const name = `standupify_${id.slice(0, 8)}.${video ? clip?.ext || 'gif' : real ? extOf(real) : 'png'}`;
+    files.set(name, video
+      ? (clip ? { mime: clip.data.type || 'video/mp4', data: clip.data } : { mime: 'image/gif', data: zoomGif(String(text)) })
+      : (real ? { mime: real.type || 'image/png', data: real } : { mime: 'image/png', data: await stillPng(String(text), Math.round(w), Math.round(h)) }));
     const saver = [...nodes].reverse().find(k => /Save/.test(graph[k].class_type)) || nodes[nodes.length - 1];
     history[id] = {
       prompt: [0, id, graph], status: { status_str: 'success', completed: true, messages: [] },

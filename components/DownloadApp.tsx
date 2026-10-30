@@ -8,7 +8,7 @@ import { Icon } from './ui';
 declare const __WEB_DEMO__: boolean;
 export const isWebDemo: boolean = __WEB_DEMO__;
 
-const REPO = 'https://github.com/meterless/standupify';
+const REPO = 'https://github.com/Meterless/standupify';
 
 interface Download { file: string; kind: 'exe' | 'msi'; size: number }
 interface Downloads { version: string; files: Download[] }

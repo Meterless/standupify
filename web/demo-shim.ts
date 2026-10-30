@@ -16,8 +16,9 @@
 /// <reference types="vite/client" />
 
 import * as demo from './demo-engines';
+import { PREVIEW_SEGMENTS } from '../services/tv/preview';
 
-const REPO = 'https://github.com/meterless/standupify';
+const REPO = 'https://github.com/Meterless/standupify';
 
 const json = (status: number, obj: unknown) => new Response(JSON.stringify(obj), { status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });
 
@@ -112,9 +113,23 @@ function showBadge() {
   if (document.body) add(); else document.addEventListener('DOMContentLoaded', add, { once: true });
 }
 
-export function installWebDemo() {
+/** The home page's sample show plays the Station's real frames of the same comics. */
+function dressPreview() {
+  for (const seg of PREVIEW_SEGMENTS) {
+    const c = demo.demoMedia().find(m => m.name === seg.name);
+    if (!c) continue;
+    seg.headshot = c.headshot;
+    seg.image = c.stills[0] || c.headshot;
+    seg.clips = c.clips.slice(0, 4);
+    if (c.clips[0]) seg.video = c.clips[0];
+  }
+}
+
+export async function installWebDemo() {
   installFetch();
   installWebSocket();
+  await demo.loadDemoMedia();
+  dressPreview();
   showBadge();
   console.info('[standupify] web demo: Nightshift and ComfyUI are simulated in this page.');
 }

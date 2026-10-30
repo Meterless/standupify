@@ -4,9 +4,11 @@
 
 ![The top of the Standupify landing page, playing](docs/media/landing-hero.gif)
 
-*The top of the [landing page](landing/index.html), recorded headless with `npm run record:hero`. Every tile behind the title is a still or clip the Station rendered in ComfyUI on the RTX 3090 rig.*
+*The top of the [landing page](https://meterless.ai/Standupify/), recorded headless with `npm run record:hero`. Every tile behind the title is a still or clip the Station rendered in ComfyUI on the RTX 3090 rig.*
 
-**[Receipts](docs/RECEIPTS.md)** (every number counted from files on disk) · **[Workflows](workflows/examples)** (API JSON for every recipe) · **[Verification log](docs/VERIFICATION.md)** · **[Landing page](landing/index.html)** · MIT
+**[▶ Try it in your browser](https://meterless.ai/Apps/Standupify/)** (no install, sample engines, the Station's real footage) · **[⬇ Download for Windows](https://meterless.ai/Standupify/#get)** (installer, Node included) · **[Landing page](https://meterless.ai/Standupify/)**
+
+**[Receipts](docs/RECEIPTS.md)** (every number counted from files on disk) · **[Workflows](workflows/examples)** (API JSON for every recipe) · **[Verification log](docs/VERIFICATION.md)** · MIT
 
 ```bash
 npm start
@@ -19,6 +21,24 @@ Want others to try it without installing anything? `npm run build:web` writes `d
 `npm run desktop:build` makes the Windows installers (`.exe` and `.msi`). The desktop app ships Node and runs the same local studio as `npm start`, so it finds and starts Nightshift and ComfyUI by itself. Run `npm run build:web` afterwards and the installers go into `dist-web/downloads/`, behind the demo's **Download** button.
 
 `npm run landing` refreshes the landing page from your Station, and `npm run landing:site` then writes `dist-landing/`, ready to upload. Its Demo and Download buttons point at the web demo in `../Apps/Standupify/` (change that with `-- --demo <url>`).
+
+## Tonight on the Circuit
+
+Nobody scripted any of this. The comics below were invented by Nightshift, booked by the Station, judged by a three-voice panel and filmed by ComfyUI, night after night, on one RTX 3090.
+
+![Night 51 at The Velvet Room: three comics' sets, the panel's scores, then the winner](docs/media/circuit-faceoff.gif)
+
+*Night 51, a headliner show at The Velvet Room. Theme: houseplants. Evie Hayes opens (8.2), Juniper Quill calls back Evie's bit (8.6), and Dez Okafor's deadpan gets an applause break and the win (9.2). Every frame is the Station's own ComfyUI footage of that night.*
+
+![The four clubs of the Circuit](docs/media/clubs.jpg)
+
+Four clubs with their own crowds and formats: open mics at The Brick Cellar, roast battles at Neon Laugh Factory, showcases on the Rooftop, and headliner and championship nights at The Velvet Room.
+
+![Backstage: joke-theft accusations, call-outs and settled scores](docs/media/drama.jpg)
+
+The drama is real too. When a set sounds like someone else's, the accuser quotes the evidence; comics call each other out, and the Station books the rematch.
+
+![All sixteen comics, ranked by Elo](docs/media/roster.jpg)
 
 ## What happens on one night
 
