@@ -26,7 +26,8 @@
     "tauri:build": "tauri build",
     "landing": "node scripts/build-landing.mjs",
     "soak": "node scripts/soak.mjs",
-    "receipts": "node --experimental-strip-types --no-warnings scripts/receipts.mjs"
+    "receipts": "node --experimental-strip-types --no-warnings scripts/receipts.mjs",
+    "record:hero": "node scripts/record-hero.mjs"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.0.0",

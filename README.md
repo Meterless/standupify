@@ -2,9 +2,9 @@
 
 **An open-source comedy network that runs on one GPU.** Invented comedians write sets, compete in clubs every night, accuse each other of stealing jokes and demand rematches. The ones who earn it get filmed: ComfyUI shoots their sets and their specials on a multi-camera rig. Nightshift (a local model runtime) writes and judges. Nothing leaves your machine.
 
-![A cut across the eight cameras of one Original](docs/media/original-cut.gif)
+![The top of the Standupify landing page, playing](docs/media/landing-hero.gif)
 
-*"Dez Okafor: Live at Last", a Standupify Original. Eight cameras, all derived from one master plate. Real frames from Wan 2.2 5B clips rendered on an RTX 3090; every clip still carries the ComfyUI graph that made it.*
+*The top of the [landing page](landing/index.html), recorded headless with `npm run record:hero`. Every tile behind the title is a still or clip the Station rendered in ComfyUI on the RTX 3090 rig.*
 
 **[Receipts](docs/RECEIPTS.md)** (every number counted from files on disk) · **[Workflows](workflows/examples)** (API JSON for every recipe) · **[Verification log](docs/VERIFICATION.md)** · **[Landing page](landing/index.html)** · MIT
 
@@ -56,6 +56,10 @@ Hide the badges for a clean recording with `?clean` in the URL.
 The director renders one **master plate**, derives the other seven cameras from it, then animates each shot from its camera's plate.
 
 ![The eight camera plates](docs/media/original-plates.jpg)
+
+![A cut across the eight cameras of one Original](docs/media/original-cut.gif)
+
+*"Dez Okafor: Live at Last", a Standupify Original. Eight cameras, all derived from one master plate. Real frames from Wan 2.2 5B clips rendered on an RTX 3090; every clip still carries the ComfyUI graph that made it.*
 
 The far angles are where identity breaks. This Original's WIDE plate came from the text rung and lost the bomber jacket. The same master through the shipped FLUX.1 Kontext workflow ([`standupify_original_plate_kontext.json`](workflows/examples/standupify_original_plate_kontext.json)) keeps it:
 
@@ -366,7 +370,7 @@ scripts/                    start · demo mock engines · setup-comfy · export-
 workflows/examples/         every built-in recipe as a ComfyUI API workflow
 ```
 
-`npm run landing` rebuilds [`landing/`](landing/index.html) from everything the Station has generated: a live channel, the program guide, Originals, the comics' minds and every frame. `npm run soak -- --hours 8 --video wan22-5b --original coverage` leaves the whole Station running and logs throughput, failures and render times to `engines/logs/soak-*.md`, rebuilding the landing page as footage arrives.
+`npm run landing` rebuilds [`landing/`](landing/index.html) from everything the Station has generated: a live channel, the program guide, Originals, the comics' minds and every frame. `npm run record:hero` then films the top of that page into `docs/media/landing-hero.gif` (headless Chrome or Edge plus ffmpeg). `npm run soak -- --hours 8 --video wan22-5b --original coverage` leaves the whole Station running and logs throughput, failures and render times to `engines/logs/soak-*.md`, rebuilding the landing page as footage arrives.
 
 `npm run typecheck` checks everything. `npm run build` makes a static build that falls back to direct connections (paste a Nightshift Quick Connect link; start ComfyUI with `--enable-cors-header`). A Tauri 2 desktop shell lives in `src-tauri/` (`npm run tauri:dev`).
 
