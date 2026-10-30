@@ -1,0 +1,150 @@
+{
+  "1": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "flux1-schnell-fp8-e4m3fn.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "2": {
+    "class_type": "DualCLIPLoader",
+    "inputs": {
+      "clip_name1": "t5xxl_fp8_e4m3fn.safetensors",
+      "clip_name2": "clip_l.safetensors",
+      "type": "flux"
+    }
+  },
+  "3": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "ae.safetensors"
+    }
+  },
+  "4": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "{{prompt}}",
+      "clip": [
+        "2",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Positive"
+    }
+  },
+  "5": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "",
+      "clip": [
+        "2",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Negative"
+    }
+  },
+  "7": {
+    "class_type": "KSampler",
+    "inputs": {
+      "seed": 42,
+      "steps": 10,
+      "cfg": 1,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "denoise": 0.42,
+      "model": [
+        "1",
+        0
+      ],
+      "positive": [
+        "4",
+        0
+      ],
+      "negative": [
+        "5",
+        0
+      ],
+      "latent_image": [
+        "13",
+        0
+      ]
+    }
+  },
+  "8": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "7",
+        0
+      ],
+      "vae": [
+        "3",
+        0
+      ]
+    }
+  },
+  "9": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "images": [
+        "8",
+        0
+      ],
+      "filename_prefix": "standupify/originals/plate"
+    }
+  },
+  "10": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "{{image}}"
+    },
+    "_meta": {
+      "title": "Master plate"
+    }
+  },
+  "11": {
+    "class_type": "ImageCrop",
+    "inputs": {
+      "image": [
+        "10",
+        0
+      ],
+      "width": 456,
+      "height": 264,
+      "x": 444,
+      "y": 23
+    },
+    "_meta": {
+      "title": "Punch-in"
+    }
+  },
+  "12": {
+    "class_type": "ImageScale",
+    "inputs": {
+      "image": [
+        "11",
+        0
+      ],
+      "upscale_method": "lanczos",
+      "width": 1344,
+      "height": 768,
+      "crop": "center"
+    }
+  },
+  "13": {
+    "class_type": "VAEEncode",
+    "inputs": {
+      "pixels": [
+        "12",
+        0
+      ],
+      "vae": [
+        "3",
+        0
+      ]
+    }
+  }
+}

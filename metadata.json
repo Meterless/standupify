@@ -1,0 +1,8 @@
+{
+  "name": "Standupify",
+  "description": "The open-source comedy special studio. Nightshift writes it, ComfyUI shoots it.",
+  "version": "1.0.0",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

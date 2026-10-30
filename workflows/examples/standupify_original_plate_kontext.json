@@ -1,0 +1,165 @@
+{
+  "1": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "flux1-dev-kontext_fp8_scaled.safetensors",
+      "weight_dtype": "default"
+    }
+  },
+  "2": {
+    "class_type": "DualCLIPLoader",
+    "inputs": {
+      "clip_name1": "t5xxl_fp8_e4m3fn.safetensors",
+      "clip_name2": "clip_l.safetensors",
+      "type": "flux"
+    }
+  },
+  "3": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "ae.safetensors"
+    }
+  },
+  "4": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "{{image}}"
+    },
+    "_meta": {
+      "title": "Master plate"
+    }
+  },
+  "5": {
+    "class_type": "ImageScale",
+    "inputs": {
+      "image": [
+        "4",
+        0
+      ],
+      "upscale_method": "lanczos",
+      "width": 1344,
+      "height": 768,
+      "crop": "center"
+    }
+  },
+  "6": {
+    "class_type": "FluxKontextImageScale",
+    "inputs": {
+      "image": [
+        "5",
+        0
+      ]
+    }
+  },
+  "7": {
+    "class_type": "VAEEncode",
+    "inputs": {
+      "pixels": [
+        "6",
+        0
+      ],
+      "vae": [
+        "3",
+        0
+      ]
+    }
+  },
+  "8": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "Move the camera to stage left: a 3/4 profile of the comedian. Keep the exact same person, face, hairstyle, outfit, microphone, stage, lighting and color grade.",
+      "clip": [
+        "2",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Positive"
+    }
+  },
+  "9": {
+    "class_type": "ReferenceLatent",
+    "inputs": {
+      "conditioning": [
+        "8",
+        0
+      ],
+      "latent": [
+        "7",
+        0
+      ]
+    }
+  },
+  "10": {
+    "class_type": "FluxGuidance",
+    "inputs": {
+      "conditioning": [
+        "9",
+        0
+      ],
+      "guidance": 2.5
+    }
+  },
+  "11": {
+    "class_type": "ConditioningZeroOut",
+    "inputs": {
+      "conditioning": [
+        "8",
+        0
+      ]
+    },
+    "_meta": {
+      "title": "Negative"
+    }
+  },
+  "12": {
+    "class_type": "KSampler",
+    "inputs": {
+      "seed": 42,
+      "steps": 20,
+      "cfg": 1,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "denoise": 1,
+      "model": [
+        "1",
+        0
+      ],
+      "positive": [
+        "10",
+        0
+      ],
+      "negative": [
+        "11",
+        0
+      ],
+      "latent_image": [
+        "7",
+        0
+      ]
+    }
+  },
+  "13": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": [
+        "12",
+        0
+      ],
+      "vae": [
+        "3",
+        0
+      ]
+    }
+  },
+  "14": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "images": [
+        "13",
+        0
+      ],
+      "filename_prefix": "standupify/originals/plate"
+    }
+  }
+}
