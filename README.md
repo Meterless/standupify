@@ -18,6 +18,8 @@ Want others to try it without installing anything? `npm run build:web` writes `d
 
 `npm run desktop:build` makes the Windows installers (`.exe` and `.msi`). The desktop app ships Node and runs the same local studio as `npm start`, so it finds and starts Nightshift and ComfyUI by itself. Run `npm run build:web` afterwards and the installers go into `dist-web/downloads/`, behind the demo's **Download** button.
 
+`npm run landing` refreshes the landing page from your Station, and `npm run landing:site` then writes `dist-landing/`, ready to upload. Its Demo and Download buttons point at the web demo in `../Apps/Standupify/` (change that with `-- --demo <url>`).
+
 ## What happens on one night
 
 1. **The scene sets the brief.** The Circuit books four clubs from ratings, feuds, rematch requests and each comic's current aim.

@@ -198,6 +198,39 @@
   .term .p { color: var(--amber); }
   .term .g { color: var(--ok); }
   .term .d { color: var(--dim); }
+  /* ---------------- getting it: nav, demo, downloads ---------------- */
+  .topnav { position: fixed; inset: 0 0 auto; z-index: 50; display: flex; align-items: center; gap: 8px; padding: 12px 20px; border-bottom: 1px solid transparent; transition: background .3s, border-color .3s; }
+  .topnav.solid { background: rgb(11 11 12 / .8); backdrop-filter: blur(14px); border-color: var(--line); }
+  .topnav .brand { display: flex; align-items: center; gap: 10px; font-family: var(--serif); font-weight: 600; font-size: 20px; margin-right: auto; }
+  .topnav .brand i { width: 30px; height: 30px; border-radius: 9px; background: var(--amber); color: var(--amber-ink); display: grid; place-items: center; }
+  .topnav .lnk { height: 36px; padding: 0 12px; border-radius: 999px; display: inline-flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 600; color: var(--muted); white-space: nowrap; transition: color .2s, background .2s; }
+  .topnav .lnk:hover { color: var(--text); background: rgb(255 255 255 / .06); }
+  .topnav .lnk.ghost { color: var(--text); border: 1px solid var(--line); background: rgb(255 255 255 / .05); }
+  .topnav .lnk.go { background: var(--amber); color: var(--amber-ink); }
+  .topnav .lnk.go:hover { filter: brightness(1.08); }
+  @media (max-width: 640px) { .topnav { padding: 10px 14px; } .topnav .lnk.wide { display: none; } .topnav .brand span { display: none; } }
+  .btn.ghost { background: rgb(255 255 255 / .07); color: var(--text); border: 1px solid var(--line); }
+  .btn small { font-size: 12px; font-weight: 500; opacity: .7; }
+  .btn small:empty { display: none; }
+  .also { margin-top: 18px; font-size: 14px; color: var(--muted); }
+  .also a { color: var(--text); border-bottom: 1px solid var(--line); }
+  .ways { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 1040px; margin: 48px auto 0; text-align: left; }
+  @media (max-width: 900px) { .ways { grid-template-columns: 1fr; max-width: 560px; } }
+  .way { display: flex; flex-direction: column; gap: 10px; padding: 24px; border-radius: 22px; background: var(--surface); border: 1px solid var(--line); transition: border-color .2s, transform .2s; }
+  a.way:hover { border-color: rgb(255 181 71 / .4); transform: translateY(-2px); }
+  .way.hot { border-color: rgb(255 181 71 / .45); background: linear-gradient(160deg, rgb(255 181 71 / .1), var(--surface) 60%); }
+  .way small { font-family: var(--mono); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--amber); }
+  .way b { font-family: var(--serif); font-size: 26px; font-weight: 600; line-height: 1.1; }
+  .way span { color: var(--muted); line-height: 1.5; font-size: 15px; }
+  .way code { font-family: var(--mono); font-size: 13px; color: var(--text); }
+  .way i { font-style: normal; font-weight: 600; margin-top: auto; padding-top: 6px; }
+  .way .dl { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-top: auto; padding-top: 6px; }
+  .way .dl .btn { height: 46px; padding: 0 20px; font-size: 15px; }
+  .way .dl .btn small { font-family: var(--sans); letter-spacing: 0; text-transform: none; color: inherit; }
+  .way .dl .mini { font-size: 14px; color: var(--muted); border-bottom: 1px solid var(--line); }
+  .fine { max-width: 640px; margin: 18px auto 0; color: var(--dim); font-size: 13px; line-height: 1.5; }
+  .fine b { color: var(--muted); }
+  footer a { color: var(--muted); } footer a:hover { color: var(--text); }
   footer { border-top: 1px solid var(--line); padding: 30px 0; color: var(--dim); font-size: 13px; }
   footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
 
@@ -301,8 +334,17 @@
 </head>
 <body>
 
+<!-- ============ NAV ============ -->
+<nav class="topnav" id="topnav" aria-label="Standupify">
+  <a class="brand" href="#top"><i><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M8.5 21h7"/></svg></i><span>Standupify</span></a>
+  <a class="lnk wide" href="#watch">Watch</a>
+  <a class="lnk wide" data-link="github" href="https://github.com/meterless/standupify">GitHub</a>
+  <a class="lnk ghost" data-link="demo" href="https://meterless.ai/Apps/Standupify/">Try the demo</a>
+  <a class="lnk go" href="#get"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12M7 11l5 5 5-5M4 19h16"/></svg>Download</a>
+</nav>
+
 <!-- ============ HERO ============ -->
-<section class="hero grain">
+<section class="hero grain" id="top">
   <div class="wall" aria-hidden="true">
     <div class="row" id="r1"></div>
     <div class="row" id="r2"></div>
@@ -314,9 +356,11 @@
     <h1>Standupify</h1>
     <p class="say">AI comedians that <b>write</b>, <b>compete</b> and <b>film their own specials</b>.</p>
     <div class="ctas">
-      <a class="btn primary" href="#watch"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12.5-7.5z"/></svg>See it work</a>
+      <a class="btn primary" data-link="demo" href="https://meterless.ai/Apps/Standupify/"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12.5-7.5z"/></svg>Try it in your browser</a>
+      <a class="btn ghost" href="#get"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12M7 11l5 5 5-5M4 19h16"/></svg>Download for Windows <small data-size="exe"></small></a>
       <button class="btn code" id="copy" title="Copy">$ npm start <span style="color:var(--dim)">⧉</span></button>
     </div>
+    <p class="also">The demo needs no install. Or <a href="#watch">see what it made on its own ↓</a></p>
     <div class="chips">
       <span class="chip"><i>●</i>No API keys</span><span class="chip"><i>●</i>No cloud bills</span><span class="chip"><i>●</i>One GPU</span><span class="chip"><i>●</i>ComfyUI + Nightshift</span><span class="chip"><i>●</i>MIT</span>
     </div>
@@ -488,6 +532,24 @@
   <div class="wrap">
     <div class="kicker reveal">Open source · MIT</div>
     <h2 class="reveal">The house lights<br>are going <em>down</em>.</h2>
+    <div class="ways reveal" id="get">
+      <a class="way" data-link="demo" href="https://meterless.ai/Apps/Standupify/">
+        <small>No install · any browser</small><b>Play the demo</b>
+        <span>Sample engines run right in the page. Cast a comic, shoot their special and run a night on the Circuit in a couple of minutes.</span>
+        <i>Open the demo →</i>
+      </a>
+      <div class="way hot">
+        <small>Windows 10 / 11 · <em data-version style="font-style:normal">Node included</em></small><b>The desktop app</b>
+        <span>Finds Nightshift and ComfyUI on your PC and starts them for you. Real comics, real footage, on your own GPU. The Circuit keeps going with the window closed.</span>
+        <div class="dl"><a class="btn primary" data-link="exe" href="https://meterless.ai/Apps/Standupify/"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12M7 11l5 5 5-5M4 19h16"/></svg>Installer (.exe) <small data-size="exe"></small></a><a class="mini" data-link="msi" href="https://meterless.ai/Apps/Standupify/">or the .msi <em data-size="msi" style="font-style:normal"></em></a></div>
+      </div>
+      <a class="way" data-link="github" href="https://github.com/meterless/standupify">
+        <small>Mac · Linux · source</small><b>Run it from source</b>
+        <span>Clone the repo and run one command. It finds both engines by itself. No GPU yet? <code>npm run demo</code> still runs everything.</span>
+        <i>GitHub →</i>
+      </a>
+    </div>
+    <p class="fine reveal">The Windows installer isn't code-signed yet, so Windows may warn you the first time. Choose <b>More info</b>, then <b>Run anyway</b>. MIT licensed, and everything runs on your own machine.</p>
     <div class="term reveal">
       <div class="bar"><i></i><i></i><i></i></div>
       <pre><span class="p">$</span> npm start
@@ -501,8 +563,28 @@
   </div>
 </section>
 
-<footer><div class="wrap"><span>Standupify · the open-source comedy network</span><span>Built for Comfy · Open Source Higgsfield 2026</span></div></footer>
+<footer><div class="wrap"><span>Standupify · the open-source comedy network · <a data-link="demo" href="https://meterless.ai/Apps/Standupify/">Demo</a> · <a href="#get">Download</a> · <a data-link="github" href="https://github.com/meterless/standupify">GitHub</a></span><span>Built for Comfy · Open Source Higgsfield 2026</span></div></footer>
 
+<script src="links.js"></script>
+<script>
+// Point every demo / download / GitHub link at links.js (rewritten by `npm run landing:site`).
+(() => {
+  const L = window.STANDUPIFY_LINKS || {};
+  const dl = L.downloads || {};
+  const mb = (n) => Math.round(n / 1048576) + ' MB';
+  document.querySelectorAll('[data-link]').forEach((a) => {
+    const k = a.dataset.link;
+    const href = k === 'demo' ? L.demo : k === 'github' ? L.github : (dl[k] && dl[k].href) || L.demo;
+    if (href) a.href = href;
+    if (dl[k]) a.setAttribute('download', '');
+  });
+  document.querySelectorAll('[data-size]').forEach((el) => { const d = dl[el.dataset.size]; el.textContent = d ? mb(d.size) : ''; });
+  if (dl.version) document.querySelectorAll('[data-version]').forEach((el) => { el.textContent = 'v' + dl.version + ' · Node included'; });
+  const nav = document.getElementById('topnav');
+  const solid = () => nav.classList.toggle('solid', scrollY > 40);
+  addEventListener('scroll', solid, { passive: true }); solid();
+})();
+</script>
 <script src="station.js"></script>
 <script>
 (() => {

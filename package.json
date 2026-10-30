@@ -27,6 +27,7 @@
     "tauri:build": "tauri build",
     "desktop:build": "tauri build --config src-tauri/tauri.bundle.json",
     "landing": "node scripts/build-landing.mjs",
+    "landing:site": "node scripts/build-landing-site.mjs",
     "soak": "node scripts/soak.mjs",
     "receipts": "node --experimental-strip-types --no-warnings scripts/receipts.mjs",
     "record:hero": "node scripts/record-hero.mjs"
