@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Standupify",
+  "mainBinaryName": "Standupify",
+  "version": "1.0.0",
+  "identifier": "ai.meterless.standupify",
+  "build": {
+    "frontendDist": "../desktop",
+    "beforeBuildCommand": "node scripts/stage-desktop.mjs"
+  },
+  "bundle": {
+    "targets": ["nsis", "msi"],
+    "resources": {
+      "app-bundle/app/": "app/",
+      "app-bundle/runtime/": "runtime/"
+    },
+    "shortDescription": "Cast a comedian, shoot the special, on your own GPU.",
+    "longDescription": "Standupify casts stand-up comedians, writes and grades their sets with Nightshift, and shoots and animates the special with ComfyUI, all on your own GPU. Includes Node.js (MIT) to run the local studio.",
+    "copyright": "© 2026 Standupify contributors · MIT"
+  }
+}

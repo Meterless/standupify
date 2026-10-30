@@ -18,6 +18,7 @@ engines/
 
 # Tauri build output
 src-tauri/target/
+src-tauri/app-bundle/
 
 # Editor directories and files
 .vscode/*

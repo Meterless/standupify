@@ -1,6 +1,7 @@
 import React from 'react';
 import { useEngines } from '../services/engines';
 import { Dot, Icon, Tone } from './ui';
+import DownloadApp, { isWebDemo } from './DownloadApp';
 
 export type View = 'home' | 'studio' | 'casting' | 'special' | 'roster' | 'circuit' | 'originals' | 'nightshift';
 
@@ -71,6 +72,7 @@ export default function TopBar({ view, onNavigate, onOpenEngines, nightShiftOn, 
           <Dot tone={comfyTone(comfy.state, eng.launching.comfy)} />
           <span className="hidden min-[420px]:inline">Engines</span>
         </button>
+        {isWebDemo && <DownloadApp />}
         <button onClick={onTuneIn} title="Watch your comedy channel"
           className="h-9 px-3.5 shrink-0 whitespace-nowrap rounded-full bg-live text-white text-[12px] font-semibold flex items-center gap-2 hover:brightness-110 transition">
           <Icon name="play" size={13} />Tune in

@@ -16,6 +16,8 @@ That is the whole setup. Standupify finds Nightshift and ComfyUI on your machine
 
 Want others to try it without installing anything? `npm run build:web` writes `dist-web/`, a static build with the same demo engines running inside the browser. Upload it to any web host, in any folder. Visitors' comics and shows are saved in their own browser.
 
+`npm run desktop:build` makes the Windows installers (`.exe` and `.msi`). The desktop app ships Node and runs the same local studio as `npm start`, so it finds and starts Nightshift and ComfyUI by itself. Run `npm run build:web` afterwards and the installers go into `dist-web/downloads/`, behind the demo's **Download** button.
+
 ## What happens on one night
 
 1. **The scene sets the brief.** The Circuit books four clubs from ratings, feuds, rematch requests and each comic's current aim.

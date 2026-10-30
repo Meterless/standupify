@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Standupify</title>
+  <!-- The desktop shell shows this while it starts the local studio (src-tauri/src/lib.rs). -->
+  <style>
+    :root { color-scheme: dark; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: radial-gradient(ellipse at 50% 30%, #2a1d10 0%, #0b0b0c 60%); color: #e9e6df; font: 15px/1.55 Manrope, "Segoe UI", system-ui, sans-serif; }
+    main { text-align: center; max-width: 440px; padding: 24px; }
+    .mark { width: 56px; height: 56px; margin: 0 auto; animation: breathe 2.4s ease-in-out infinite; }
+    h1 { font: 600 30px/1.2 "Space Grotesk", "Segoe UI", system-ui, sans-serif; margin: 20px 0 8px; }
+    p { color: #a39f97; margin: 0; }
+    #status { min-height: 1.6em; }
+    #error { display: none; margin-top: 18px; padding: 14px 16px; border-radius: 12px; border: 1px solid rgba(255,107,87,.35); background: rgba(255,107,87,.08); color: #f3d3cc; text-align: left; font-size: 13px; }
+    #error code { font: 12px/1.4 "JetBrains Mono", Consolas, monospace; color: #ffb547; word-break: break-all; }
+    button { margin-top: 12px; padding: 8px 16px; border-radius: 999px; border: 0; background: #ffb547; color: #1a1206; font-weight: 600; cursor: pointer; }
+    @keyframes breathe { 50% { transform: scale(1.06); opacity: .85; } }
+  </style>
+</head>
+<body>
+  <main>
+    <svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1a1712"/><rect x="24" y="10" width="16" height="28" rx="8" fill="#ffb547"/><path d="M18 30a14 14 0 0 0 28 0" stroke="#ffb547" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M32 44v10M24 54h16" stroke="#ffb547" stroke-width="4" stroke-linecap="round"/></svg>
+    <h1>Opening your club</h1>
+    <p id="status" role="status">Getting the room ready…</p>
+    <div id="error" role="alert">
+      <div id="error-text"></div>
+      <div id="error-log" style="margin-top:8px"></div>
+      <button onclick="location.reload()">Try again</button>
+    </div>
+  </main>
+  <script>
+    window.setStatus = (t) => { document.getElementById('status').textContent = t; };
+    window.setError = (t, log) => {
+      document.getElementById('status').textContent = 'Something went wrong.';
+      document.getElementById('error-text').textContent = t;
+      document.getElementById('error-log').innerHTML = log ? 'Details are in <code></code>' : '';
+      if (log) document.querySelector('#error-log code').textContent = log;
+      document.getElementById('error').style.display = 'block';
+    };
+  </script>
+</body>
+</html>

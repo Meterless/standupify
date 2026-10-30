@@ -61,3 +61,9 @@ if (!noOpen) {
   const opener = process.platform === 'win32' ? ['cmd', ['/c', 'start', '', url]] : process.platform === 'darwin' ? ['open', [url]] : ['xdg-open', [url]];
   spawn(opener[0], opener[1], { stdio: 'ignore', detached: true }).on('error', () => { /* no browser to open */ }).unref();
 }
+
+// Inside the desktop app (src-tauri/src/lib.rs) the shell holds our stdin open:
+// when the shell goes, however it goes, so does the studio.
+if (process.env.STANDUPIFY_DESKTOP) {
+  process.stdin.on('end', () => process.exit(0)).on('error', () => process.exit(0)).resume();
+}
