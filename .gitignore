@@ -5,6 +5,7 @@ npm-debug.log*
 
 node_modules
 dist
+dist-web
 dist-ssr
 *.local
 
@@ -39,3 +40,4 @@ src-tauri/gen/
 
 # Pre-refactor design notes from the Sitcomify era (hosted-provider plans, not used by Standupify)
 docs/archive/
+standupify-web.zip

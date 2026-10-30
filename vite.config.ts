@@ -25,6 +25,9 @@ export default defineConfig({
 
   envPrefix: ['VITE_', 'TAURI_ENV_*'],
 
+  // `npm run build:web` sets this: the hosted demo answers the bridge in the page (web/demo-shim.ts).
+  define: { __WEB_DEMO__: JSON.stringify(process.env.STANDUPIFY_WEB_DEMO === '1') },
+
   plugins: [react(), tailwindcss(), standupifyBridge()],
 
   resolve: {

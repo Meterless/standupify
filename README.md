@@ -14,6 +14,8 @@ npm start
 
 That is the whole setup. Standupify finds Nightshift and ComfyUI on your machine: ports, access token and installed models. Anything not running gets a **Start** button. No engines yet? `npm run demo` runs the full app on built-in mock engines, and everything it makes is labelled as sample output. `npm run setup:comfy` installs ComfyUI and the open-weights models.
 
+Want others to try it without installing anything? `npm run build:web` writes `dist-web/`, a static build with the same demo engines running inside the browser. Upload it to any web host, in any folder. Visitors' comics and shows are saved in their own browser.
+
 ## What happens on one night
 
 1. **The scene sets the brief.** The Circuit books four clubs from ratings, feuds, rematch requests and each comic's current aim.

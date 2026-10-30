@@ -20,6 +20,7 @@
     "test:provenance": "node --experimental-strip-types --no-warnings --test scripts/test-provenance.mjs",
     "test:station": "node scripts/test-night-shift.mjs",
     "build": "vite build",
+    "build:web": "node scripts/build-web.mjs",
     "preview": "vite preview",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
